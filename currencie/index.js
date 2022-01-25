@@ -1,4 +1,5 @@
 // TODO: Instant faire une requete à l'API pour récupérer toutes les taux de change par rapport à l'EURO
+// TODO : Modifier les les commentaires spéciaux et faire une note dans Notion tops VS Code
 window.addEventListener("DOMContentLoaded", () => {
   var button = document.getElementById("convert");
 
@@ -7,42 +8,64 @@ window.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+// Ajouter au chargement de la page les monnaies dans les listes
+window.addEventListener("DOMContentLoaded", (event) => {
+  const baseCurrency = getCurrenciesNames();
+
+  addCurrencyToList(baseCurrency);
+});
+
 function Main() {
-  const URL =
-    "https://freecurrencyapi.net/api/v2/latest?apikey=c4cd5ff0-7394-11ec-acfe-0161b9bb46f8";
+  // $("#listBaseCurrency").html("test");
 
-  const baseCurrency = getBaseCurrency();
+  // OLD URL   "https://freecurrencyapi.net/api/v2/latest?apikey=c4cd5ff0-7394-11ec-acfe-0161b9bb46f8";
 
-  console.log(`baseCurrency : ${baseCurrency}`);
+  var baseCurrency = getNameBaseCurrency();
 
-  const buildedURL = buildURL(URL, baseCurrency);
+  var targetCurrency = getNameTargetCurrency();
+
+  const buildedURL = buildURL(baseCurrency);
 
   console.log(buildedURL);
 
   const currenciesChange = httpGetCurrencies(buildedURL);
 
-  addCurrencyToList(currenciesChange);
+  console.log(currenciesChange);
 
-  var currencieChange = getCurrencieChange(currenciesChange);
+  console.log(getAmountBaseCurrency());
+
+  // addCurrencyToList(currenciesChange);
+
+  // var currencieChange = getCurrencieChange(currenciesChange);
 
   // console.log(JSON.stringify(currencyChange));
   // console.log(currencyChange);
   // console.log(result["response"].total);
 }
 
-// Améliorer la fonction pour récupérer automatiquement les données
-// Les retourner dans un array Key value pairs
-function getBaseCurrency() {
-  var listBaseCurrency = document.getElementById("listBaseCurrency");
-  return listBaseCurrency.options[listBaseCurrency.selectedIndex].value;
+// TODO : compute the change
+var computeChange()
+
+
+// TODO : Get the exchange rate
+var exchangeRate = () => {
+
 }
 
-function buildURL(URL, baseCurrency) {
-  console.log(baseCurrency);
-  return `${URL}&base_currency=${baseCurrency}`;
+function getCurrenciesNames() {
+  var xmlHttp = new XMLHttpRequest();
+  xmlHttp.open("GET", "https://api.coinbase.com/v2/currencies", false); // false for synchronous request
+  xmlHttp.send(null);
+  return JSON.parse(xmlHttp.responseText);
 }
 
-// TODO: Mettre à jour la requete
+function buildURL(baseCurrency) {
+  // https://api.coinbase.com/v2/exchange-rates?currency=EUR
+  return `https://api.coinbase.com/v2/exchange-rates?currency=${baseCurrency}`;
+}
+
+// TODO: Mettre à jour la requete, deux requetes à faire
+// TODO: Récup toutes les monnaies
 function httpGetCurrencies(buildedURL) {
   var xmlHttp = new XMLHttpRequest();
   xmlHttp.open("GET", buildedURL, false); // false for synchronous request
@@ -50,27 +73,51 @@ function httpGetCurrencies(buildedURL) {
   return JSON.parse(xmlHttp.responseText);
 }
 
-var getTargetCurrency = () => {
-  var listTargetCurrency = document.getElementById("listTargetCurrency");
+// Améliorer la fonction pour récupérer automatiquement les données
+// Les retourner dans un array Key value pairs
+function getNameBaseCurrency() {
+  var listNameBaseCurrency = document.getElementById("listNameBaseCurrency");
+  return listNameBaseCurrency.options[listNameBaseCurrency.selectedIndex].value;
+}
+
+var getAmountBaseCurrency = () => {
+  return document.getElementById("amoutBaseCurrency").value;
+};
+
+var getNameTargetCurrency = () => {
+  var listNameTargetCurrency = document.getElementById(
+    "listNameTargetCurrency"
+  );
   console.log(
-    listTargetCurrency.options[listTargetCurrency.selectedIndex].value
+    listNameTargetCurrency.options[listNameTargetCurrency.selectedIndex].value
   );
 };
 
-var addCurrencyToList = (currenciesChange) => {
-  var listBaseCurrency = document.getElementById("listBaseCurrency");
-  var listTargetCurrency = document.getElementById("listTargetCurrency");
+var getAmountTargetCurrency = () => {
+  return document.getElementById("amoutTargetCurrency").value;
+};
 
-  // Permet de récupérer le taux de change
-  for (currencie in currenciesChange.data) {
-    var option = document.createElement("option");
-    option.text = currencie;
-    option.value = currencie;
+// TODO : je sais pas pourquoi je ne peux pas ajouter en même temps les options aux deux listes
+// En fait si je pense savoir
+var addCurrencyToList = (baseCurrency) => {
+  var listNameBaseCurrency = document.getElementById("listNameBaseCurrency");
+  var listNameTargetCurrency = document.getElementById(
+    "listNameTargetCurrency"
+  );
+
+  baseCurrency.data.forEach((currencie) => {
+    let optionBaseCurrency = document.createElement("option");
+    let optionTargetCurrency = document.createElement("option");
+
+    optionBaseCurrency.text = currencie.name;
+    optionBaseCurrency.value = currencie.id;
+    optionTargetCurrency.text = currencie.name;
+    optionTargetCurrency.value = currencie.id;
 
     // Add currency to lists
-    listBaseCurrency.appendChild(option);
-    listTargetCurrency.appendChild(option);
-  }
+    listNameBaseCurrency.appendChild(optionBaseCurrency);
+    listNameTargetCurrency.appendChild(optionTargetCurrency);
+  });
 };
 
 var getCurrencieChange = (currenciesChange) => {
