@@ -4,21 +4,25 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="./index.js"></script>
+    <script src="./index.js"></script> 
+    <!-- <script src="test.js"></script> -->
     <title>Document</title>
 </head>
 <body>
     <input type="number">
-    <select name="currencieStart" id="currencieStart">
+    <select name="listBaseCurrency" id="listBaseCurrency">
+        <option value="JPY">Yen</option>
         <option value="EUR">Euro</option>
         <option value="USD">Dollar</option>
     </select>
 
     <input type="number">
-    <select name="currencieTarget" id="currencieTarget">
+    <select name="listTargetCurrency" id="listTargetCurrency">
         <option value="EUR">Euro</option>
         <option value="USD">Dollar</option>
     </select>
+
+    <button id="convert">Conversion</button>
 
     <div id="convertRate">
         

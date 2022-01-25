@@ -1,43 +1,80 @@
+// TODO: Instant faire une requete à l'API pour récupérer toutes les taux de change par rapport à l'EURO
+window.addEventListener("DOMContentLoaded", () => {
+  var button = document.getElementById("convert");
+
+  button.addEventListener("click", () => {
+    Main();
+  });
+});
+
 function Main() {
   const URL =
-    "http://api.exchangeratesapi.io/v1/latest?access_key=ce61b0665230b6288e0188a9f1617da3";
+    "https://freecurrencyapi.net/api/v2/latest?apikey=c4cd5ff0-7394-11ec-acfe-0161b9bb46f8";
 
-  const result = httpGetCurrencies(URL);
-  console.log(JSON.stringify(result));
-  console.log(result);
+  const baseCurrency = getBaseCurrency();
+
+  console.log(`baseCurrency : ${baseCurrency}`);
+
+  const buildedURL = buildURL(URL, baseCurrency);
+
+  console.log(buildedURL);
+
+  const currenciesChange = httpGetCurrencies(buildedURL);
+
+  addCurrencyToList(currenciesChange);
+
+  var currencieChange = getCurrencieChange(currenciesChange);
+
+  // console.log(JSON.stringify(currencyChange));
+  // console.log(currencyChange);
   // console.log(result["response"].total);
 }
 
 // Améliorer la fonction pour récupérer automatiquement les données
 // Les retourner dans un array Key value pairs
-function getParameters() {
-  const listParameters = ["lastName", "firstName", "deathCountry", "deathCity"];
-  const parameters = {};
-
-  for (let i = 0; i < listParameters.length; i++) {
-    if (document.getElementById(listParameters[i]) != "") {
-      parameters[listParameters[i]] = document.getElementById(
-        listParameters[i]
-      ).value;
-    }
-  }
-
-  return parameters;
+function getBaseCurrency() {
+  var listBaseCurrency = document.getElementById("listBaseCurrency");
+  return listBaseCurrency.options[listBaseCurrency.selectedIndex].value;
 }
 
-// test Token
-
-function buildURL(parameters) {
-  return (URL = `https://deces.matchid.io/deces/api/v1/agg?firstName=${parameters["firstName"]}&lastName=${parameters["lastName"]}&deathCity=${parameters["deathCity"]}&deathCountry=${parameters["deathCountry"]}&fuzzy=false&aggs=firstName`);
+function buildURL(URL, baseCurrency) {
+  console.log(baseCurrency);
+  return `${URL}&base_currency=${baseCurrency}`;
 }
 
-function httpGetCurrencies(url) {
+// TODO: Mettre à jour la requete
+function httpGetCurrencies(buildedURL) {
   var xmlHttp = new XMLHttpRequest();
-  xmlHttp.open("GET", url, false); // false for synchronous request
+  xmlHttp.open("GET", buildedURL, false); // false for synchronous request
   xmlHttp.send(null);
   return JSON.parse(xmlHttp.responseText);
 }
 
-function numberDeath(result) {
-  document.getElementById("death").textContent = result["response"].total;
-}
+var getTargetCurrency = () => {
+  var listTargetCurrency = document.getElementById("listTargetCurrency");
+  console.log(
+    listTargetCurrency.options[listTargetCurrency.selectedIndex].value
+  );
+};
+
+var addCurrencyToList = (currenciesChange) => {
+  var listBaseCurrency = document.getElementById("listBaseCurrency");
+  var listTargetCurrency = document.getElementById("listTargetCurrency");
+
+  // Permet de récupérer le taux de change
+  for (currencie in currenciesChange.data) {
+    var option = document.createElement("option");
+    option.text = currencie;
+    option.value = currencie;
+
+    // Add currency to lists
+    listBaseCurrency.appendChild(option);
+    listTargetCurrency.appendChild(option);
+  }
+};
+
+var getCurrencieChange = (currenciesChange) => {
+  var currencieChange = getTargetCurrency();
+  return currenciesChange[getTargetCurrency()];
+  // return currenciesChange[currencieChange]
+};
