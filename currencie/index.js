@@ -20,19 +20,23 @@ function Main() {
 
   // OLD URL   "https://freecurrencyapi.net/api/v2/latest?apikey=c4cd5ff0-7394-11ec-acfe-0161b9bb46f8";
 
-  var baseCurrency = getNameBaseCurrency();
+  var nameBaseCurrencie = getNameBaseCurrencie();
+  var nameTargetCurrencie = getNameTargetCurrencie();
+  var amountBaseCurrencie = getAmountBaseCurrencie();
+  var amountTargetCurrencie = getAmountTargetCurrencie();
 
-  var targetCurrency = getNameTargetCurrency();
-
-  const buildedURL = buildURL(baseCurrency);
-
-  console.log(buildedURL);
+  const buildedURL = buildURL(nameBaseCurrencie);
 
   const currenciesChange = httpGetCurrencies(buildedURL);
 
-  console.log(currenciesChange);
+  var exchangeRate = getExchangeRate(currenciesChange, nameTargetCurrencie);
 
-  console.log(getAmountBaseCurrency());
+  console.log(exchangeRate);
+  console.log(amountBaseCurrencie);
+  var change = computeChange(exchangeRate, amountBaseCurrencie);
+
+  console.log(change);
+  displayChange(change);
 
   // addCurrencyToList(currenciesChange);
 
@@ -43,14 +47,23 @@ function Main() {
   // console.log(result["response"].total);
 }
 
+var displayChange = (change) => {
+  document.getElementById("amoutTargetCurrency").value = change.toFixed(2);
+};
+
 // TODO : compute the change
-var computeChange()
+var computeChange = (exchangeRate, amountTargetCurrencie) => {
+  return exchangeRate * amountTargetCurrencie;
+};
 
-
-// TODO : Get the exchange rate
-var exchangeRate = () => {
-
-}
+// TODO : Get the exchange rate betwen Base and Target
+var getExchangeRate = (currenciesChange, nameTargetCurrencie) => {
+  for (rate in currenciesChange.data.rates) {
+    if (rate === nameTargetCurrencie) {
+      return currenciesChange.data.rates[rate];
+    }
+  }
+};
 
 function getCurrenciesNames() {
   var xmlHttp = new XMLHttpRequest();
@@ -59,9 +72,9 @@ function getCurrenciesNames() {
   return JSON.parse(xmlHttp.responseText);
 }
 
-function buildURL(baseCurrency) {
+function buildURL(nameBaseCurreny) {
   // https://api.coinbase.com/v2/exchange-rates?currency=EUR
-  return `https://api.coinbase.com/v2/exchange-rates?currency=${baseCurrency}`;
+  return `https://api.coinbase.com/v2/exchange-rates?currency=${nameBaseCurreny}`;
 }
 
 // TODO: Mettre à jour la requete, deux requetes à faire
@@ -75,25 +88,24 @@ function httpGetCurrencies(buildedURL) {
 
 // Améliorer la fonction pour récupérer automatiquement les données
 // Les retourner dans un array Key value pairs
-function getNameBaseCurrency() {
+function getNameBaseCurrencie() {
   var listNameBaseCurrency = document.getElementById("listNameBaseCurrency");
   return listNameBaseCurrency.options[listNameBaseCurrency.selectedIndex].value;
 }
 
-var getAmountBaseCurrency = () => {
+var getAmountBaseCurrencie = () => {
   return document.getElementById("amoutBaseCurrency").value;
 };
 
-var getNameTargetCurrency = () => {
+var getNameTargetCurrencie = () => {
   var listNameTargetCurrency = document.getElementById(
     "listNameTargetCurrency"
   );
-  console.log(
-    listNameTargetCurrency.options[listNameTargetCurrency.selectedIndex].value
-  );
+  return listNameTargetCurrency.options[listNameTargetCurrency.selectedIndex]
+    .value;
 };
 
-var getAmountTargetCurrency = () => {
+var getAmountTargetCurrencie = () => {
   return document.getElementById("amoutTargetCurrency").value;
 };
 
