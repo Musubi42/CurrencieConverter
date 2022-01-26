@@ -1,5 +1,6 @@
 // TODO: Instant faire une requete à l'API pour récupérer toutes les taux de change par rapport à l'EURO
 // TODO : Modifier les les commentaires spéciaux et faire une note dans Notion tops VS Code
+// TODO : Dev en jQuery
 window.addEventListener("DOMContentLoaded", () => {
   var button = document.getElementById("convert");
 
@@ -27,7 +28,7 @@ function Main() {
 
   const buildedURL = buildURL(nameBaseCurrencie);
 
-  const currenciesChange = httpGetCurrencies(buildedURL);
+  const currenciesChange = getCurrenciesChange(buildedURL);
 
   var exchangeRate = getExchangeRate(currenciesChange, nameTargetCurrencie);
 
@@ -56,6 +57,7 @@ var computeChange = (exchangeRate, amountTargetCurrencie) => {
   return exchangeRate * amountTargetCurrencie;
 };
 
+// Doc of the API endpoint https://developers.coinbase.com/api/v2#get-currencies
 // TODO : Get the exchange rate betwen Base and Target
 var getExchangeRate = (currenciesChange, nameTargetCurrencie) => {
   for (rate in currenciesChange.data.rates) {
@@ -65,6 +67,7 @@ var getExchangeRate = (currenciesChange, nameTargetCurrencie) => {
   }
 };
 
+// Doc of the API endpoint https://developers.coinbase.com/api/v2#get-exchange-rates
 function getCurrenciesNames() {
   var xmlHttp = new XMLHttpRequest();
   xmlHttp.open("GET", "https://api.coinbase.com/v2/currencies", false); // false for synchronous request
@@ -79,7 +82,7 @@ function buildURL(nameBaseCurreny) {
 
 // TODO: Mettre à jour la requete, deux requetes à faire
 // TODO: Récup toutes les monnaies
-function httpGetCurrencies(buildedURL) {
+function getCurrenciesChange(buildedURL) {
   var xmlHttp = new XMLHttpRequest();
   xmlHttp.open("GET", buildedURL, false); // false for synchronous request
   xmlHttp.send(null);
