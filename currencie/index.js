@@ -1,6 +1,6 @@
 // TODO: Instant faire une requete à l'API pour récupérer toutes les taux de change par rapport à l'EURO
 // TODO : Modifier les les commentaires spéciaux et faire une note dans Notion tops VS Code
-// TODO : Dev en jQuery
+// TODO : Dev en jQuery mais pas que
 window.addEventListener("DOMContentLoaded", () => {
   var button = document.getElementById("convert");
 
